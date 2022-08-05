@@ -4,10 +4,10 @@ Simple REST API for blog.
 
 ## Table of contents
 
-* [Tech stack](#Tech)
+* [Tech stack](#Tech_stack)
 * [Description](#Description)
 
-## Tech stack
+## Tech_stack
 
 Created using:
 
