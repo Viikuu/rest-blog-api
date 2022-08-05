@@ -1,0 +1,29 @@
+{
+  "name": "rest-blog-api",
+  "version": "1.0.0",
+  "description": "Simple REST API for blog",
+  "main": "app.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "node app.mjs"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "Viikuu",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.5.0"
+  },
+  "devDependencies": {
+    "xo": "^0.51.0"
+  },
+  "xo": {
+    "rules": {
+      "new-cap": "off",
+      "no-negated-condition": "off"
+    }
+  }
+}
