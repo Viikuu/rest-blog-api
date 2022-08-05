@@ -4,7 +4,7 @@ Simple REST API for blog.
 
 ## Table of contents
 
-* [Tech stack](#Tech stack)
+* [Tech stack](#Tech)
 * [Description](#Description)
 
 ## Tech stack
