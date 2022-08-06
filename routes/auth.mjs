@@ -1,6 +1,7 @@
 import express from 'express';
 import {compare, genSalt, hash} from 'bcrypt';
 import {User} from '../models/user.mjs';
+import {createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken} from '../utils/tokens.mjs';
 
 const authRouter = express.Router();
 
@@ -37,7 +38,9 @@ authRouter.post('/login', async (request, response) => {
 			if (!validate) {
 				response.status(400).json('Wrong credentials!');
 			} else {
-				const {password, ...others} = user._doc;
+				sendAccessToken(request, response, await createAccessToken(user));
+				sendRefreshToken(response, await createRefreshToken(user));
+				const {password, refreshToken, ...others} = user._doc;
 				response.status(200).json(others);
 			}
 		}
