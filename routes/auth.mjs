@@ -25,7 +25,7 @@ authRouter.post('/register', async (request, response) => {
 	} catch (error) {
 		if (error.code === 11000) {
 			response.status(400).json('This username or email already exists');
-		}else {
+		} else {
 			response.status(500).json(error);
 		}
 
@@ -60,7 +60,31 @@ authRouter.post('/login', async (request, response) => {
 	}
 });
 
-authRouter.post('/logout',(request, response) => {
+authRouter.post('/logout', async (request, response) => {
+	try {
+		const authHeader = request.headers['authorization'];
+		const token = authHeader && authHeader.split(' ')[1];
+		if (token == null) return response.sendStatus(401);
+		const id = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+		if (id) {
+			const newToken = new Token({
+				name: token,
+			});
+			await newToken.save();
+		}
+
+		const code = jwt.verify(request.cookie.refreshToken, process.env.REFRESH_TOKEN_SECRET);
+		const user = User.find({
+			code,
+		});
+		await User.findByIdAndUpdate(user._id, {
+			code: ''
+		}, {
+			new: true,
+		});
+	} catch (error) {
+		console.error(error);
+	}
 	response.clearCookie('refreshToken');
 	response.send({
 		message: 'Logged out successfully',
