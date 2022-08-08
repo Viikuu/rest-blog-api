@@ -2,6 +2,8 @@ import express from 'express';
 import {compare, genSalt, hash} from 'bcrypt';
 import {User} from '../models/user.mjs';
 import {createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken} from '../utils/tokens.mjs';
+import jwt from 'jsonwebtoken';
+import {Token} from '../models/tokenblacklist.mjs';
 
 const authRouter = express.Router();
 
@@ -15,12 +17,18 @@ authRouter.post('/register', async (request, response) => {
 			username: request.body.username,
 			email: request.body.email,
 			password: hashedPass,
+			refreshToken: '',
 		});
 		const user = await newUser.save();
 
 		response.status(200).json(user);
 	} catch (error) {
-		response.status(500).json(error);
+		if (error.code === 11000) {
+			response.status(400).json('This username or email already exists');
+		}else {
+			response.status(500).json(error);
+		}
+
 	}
 });
 
@@ -38,10 +46,13 @@ authRouter.post('/login', async (request, response) => {
 			if (!validate) {
 				response.status(400).json('Wrong credentials!');
 			} else {
-				sendAccessToken(request, response, await createAccessToken(user));
 				sendRefreshToken(response, await createRefreshToken(user));
-				const {password, refreshToken, ...others} = user._doc;
-				response.status(200).json(others);
+				sendAccessToken(request, response, await createAccessToken(user));
+				await User.findByIdAndUpdate(user._id, {
+					$set: user,
+				}, {
+					new: true,
+				});
 			}
 		}
 	} catch (error) {
