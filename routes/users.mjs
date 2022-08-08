@@ -21,7 +21,12 @@ userRouter.put('/:id', async (request, response) => {
 			});
 			response.status(200).json(updatedUser);
 		} catch (error) {
-			response.status(500).json(error);
+			if (error.code === 11000){
+				response.status(400).json('This username or email already exists');
+			} else {
+				response.status(500).json(error);
+			}
+
 		}
 	} else {
 		response.status(500).json('U can update only your account!');

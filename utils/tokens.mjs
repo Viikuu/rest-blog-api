@@ -8,9 +8,11 @@ async function createRefreshToken(user) {
 }
 
 const sendAccessToken = (request, response, accessToken) => {
-	response.send({
+	response
+		.status(200)
+		.send({
 		accessToken,
-		username: request.body.username,
+		_id: request.body._id,
 	});
 };
 
