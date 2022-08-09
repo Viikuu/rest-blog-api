@@ -9,9 +9,18 @@ function authenticateToken(request, response, next) {
 		return response.sendStatus(401);
 	}
 
-		request.body._id = element._id;
+	try {
+		const element = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+		request._id = element._id;
+		request.username = element.username;
 		next();
-	});
+	} catch (error) {
+		if (error.name === 'TokenExpiredError') {
+			response.status(401).json('Unauthorized, token expired');
+		} else {
+			response.sendStatus(401);
+		}
+	}
 }
 
 export {
