@@ -9,7 +9,7 @@ const TokenSchema = new mongoose.Schema(
 		},
 	},
 );
-const Token = mongoose.model('Category', TokenSchema);
+const Token = mongoose.model('Token', TokenSchema);
 
 export {
 	Token,

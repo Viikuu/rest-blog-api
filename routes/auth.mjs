@@ -67,6 +67,7 @@ authRouter.post('/logout', async (request, response) => {
 		const token = authHeader && authHeader.split(' ')[1];
 		if (token !== null) {
 			const id = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
 			if (id) {
 				const newToken = new Token({
 					name: token,
@@ -75,7 +76,7 @@ authRouter.post('/logout', async (request, response) => {
 			}
 		}
 
-		const code = jwt.verify(request.cookie.refreshToken, process.env.REFRESH_TOKEN_SECRET);
+		const code = jwt.verify(request.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET);
 		const user = User.find({
 			code,
 		});
@@ -85,7 +86,9 @@ authRouter.post('/logout', async (request, response) => {
 			new: true,
 		});
 	} catch (error) {
-		console.error(error);
+		if (error.code !== 11000 && error.name !== 'TokenExpiredError' && error.name !== 'JsonWebTokenError') {
+			console.error(error);
+		}
 	}
 
 	response.clearCookie('refreshToken');

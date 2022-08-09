@@ -2,6 +2,7 @@ import process from 'node:process';
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 import {authRouter} from './routes/auth.mjs';
 import {userRouter} from './routes/users.mjs';
 import {postRouter} from './routes/posts.mjs';
@@ -11,6 +12,7 @@ const app = express();
 
 dotenv.config();
 app.use(express.json());
+app.use(cookieParser());
 
 await mongoose.connect(process.env.MONGO_URL);
 
