@@ -7,15 +7,19 @@ const postRouter = express.Router();
 
 postRouter.post('/', async (request, response) => {
 	const newPost = new Post(request.body);
-	try {
-		const savedPost = await newPost.save();
-		response.status(200).json(savedPost);
-	} catch (error) {
-		if (error.code === 11000) {
-			response.status(400).json('This title already exists, try again with other title!');
-		} else {
-			response.status(500).json(error);
+	if (request.body.username === request.username) {
+		try {
+			const savedPost = await newPost.save();
+			response.status(200).json(savedPost);
+		} catch (error) {
+			if (error.code === 11000) {
+				response.status(400).json('This title already exists, try again with other title!');
+			} else {
+				response.status(500).json(error);
+			}
 		}
+	} else {
+		response.status(405);
 	}
 });
 
@@ -24,7 +28,7 @@ postRouter.post('/', async (request, response) => {
 postRouter.put('/:id', async (request, response) => {
 	try {
 		const post = await Post.findById(request.params.id);
-		if (post.username === request.body.username) {
+		if (post.username === request.body.username && request.body.username === request.username) {
 			const updatedPost = await Post.findByIdAndUpdate(request.params.id, {
 				$set: request.body,
 			}, {
@@ -48,7 +52,7 @@ postRouter.put('/:id', async (request, response) => {
 postRouter.delete('/:id', async (request, response) => {
 	try {
 		const post = await Post.findById(request.params.id);
-		if (post.username === request.body.username) {
+		if (post.username === request.body.username && request.body.username === request.username) {
 			await Post.findByIdAndDelete(request.params.id);
 			response.status(200).json('Post deleted...');
 		} else {

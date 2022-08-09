@@ -8,7 +8,7 @@ const userRouter = express.Router();
 // Update user
 
 userRouter.put('/:id', async (request, response) => {
-	if (request.body._id === request.params.id) {
+	if (request.body._id === request.params.id && request.params.id === request._id) {
 		if (request.body.password) {
 			request.body.password = await hash(request.body.password, 10);
 		}
@@ -35,7 +35,7 @@ userRouter.put('/:id', async (request, response) => {
 // Delete user
 
 userRouter.delete('/:id', async (request, response) => {
-	if (request.body._id === request.params.id) {
+	if (request.body._id === request.params.id && request.params.id === request._id) {
 		try {
 			const user = await User.findById(request.params.id);
 			if (!user) {
