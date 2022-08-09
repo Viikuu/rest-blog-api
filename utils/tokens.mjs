@@ -1,6 +1,5 @@
 async function createAccessToken(user) {
 	return user.generateAuthToken();
-
 }
 
 async function createRefreshToken(user) {
@@ -11,9 +10,9 @@ const sendAccessToken = (request, response, accessToken) => {
 	response
 		.status(200)
 		.send({
-		accessToken,
-		_id: request.body._id,
-	});
+			accessToken,
+			_id: request.body._id,
+		});
 };
 
 const sendRefreshToken = (response, refreshToken) => {

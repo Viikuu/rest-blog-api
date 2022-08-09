@@ -7,7 +7,7 @@ const TokenSchema = new mongoose.Schema(
 			required: true,
 			unique: true,
 		},
-	}
+	},
 );
 const Token = mongoose.model('Category', TokenSchema);
 

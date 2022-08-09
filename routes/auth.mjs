@@ -1,8 +1,9 @@
+import process from 'node:process';
 import express from 'express';
 import {compare, genSalt, hash} from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import {User} from '../models/user.mjs';
 import {createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken} from '../utils/tokens.mjs';
-import jwt from 'jsonwebtoken';
 import {Token} from '../models/tokenblacklist.mjs';
 
 const authRouter = express.Router();
@@ -28,7 +29,6 @@ authRouter.post('/register', async (request, response) => {
 		} else {
 			response.status(500).json(error);
 		}
-
 	}
 });
 
@@ -65,13 +65,14 @@ authRouter.post('/logout', async (request, response) => {
 	try {
 		const authHeader = request.headers['authorization'];
 		const token = authHeader && authHeader.split(' ')[1];
-		if (token == null) return response.sendStatus(401);
-		const id = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-		if (id) {
-			const newToken = new Token({
-				name: token,
-			});
-			await newToken.save();
+		if (token !== null) {
+			const id = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+			if (id) {
+				const newToken = new Token({
+					name: token,
+				});
+				await newToken.save();
+			}
 		}
 
 		const code = jwt.verify(request.cookie.refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -79,18 +80,19 @@ authRouter.post('/logout', async (request, response) => {
 			code,
 		});
 		await User.findByIdAndUpdate(user._id, {
-			code: ''
+			code: '',
 		}, {
 			new: true,
 		});
 	} catch (error) {
 		console.error(error);
 	}
+
 	response.clearCookie('refreshToken');
 	response.send({
 		message: 'Logged out successfully',
 	});
-})
+});
 
 export {
 	authRouter,

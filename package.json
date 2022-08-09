@@ -24,7 +24,11 @@
   "xo": {
     "rules": {
       "new-cap": "off",
-      "no-negated-condition": "off"
+      "no-negated-condition": "off",
+      "unicorn/numeric-separators-style": "off",
+      "dot-notation": "off",
+      "no-eq-null": "off",
+      "eqeqeq": "off"
     }
   }
 }

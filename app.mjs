@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import {authRouter} from './routes/auth.mjs';
 import {userRouter} from './routes/users.mjs';
 import {postRouter} from './routes/posts.mjs';
-import {authenticateToken} from './utils/auth_middleware.mjs';
+import {authenticateToken} from './utils/auth-middleware.mjs';
 
 const app = express();
 
