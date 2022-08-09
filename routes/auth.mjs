@@ -46,6 +46,7 @@ authRouter.post('/login', async (request, response) => {
 			if (!validate) {
 				response.status(400).json('Wrong credentials!');
 			} else {
+				request.body._id = user._id;
 				sendRefreshToken(response, await createRefreshToken(user));
 				sendAccessToken(request, response, await createAccessToken(user));
 				await User.findByIdAndUpdate(user._id, {
