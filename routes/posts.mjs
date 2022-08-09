@@ -11,7 +11,11 @@ postRouter.post('/', async (request, response) => {
 		const savedPost = await newPost.save();
 		response.status(200).json(savedPost);
 	} catch (error) {
-		response.status(500).json(error);
+		if (error.code === 11000) {
+			response.status(400).json('This title already exists, try again with other title!');
+		} else {
+			response.status(500).json(error);
+		}
 	}
 });
 
@@ -31,7 +35,11 @@ postRouter.put('/:id', async (request, response) => {
 			response.status(401).json('U can update only your post!');
 		}
 	} catch (error) {
-		response.status(500).json(error);
+		if (error.code === 11000) {
+			response.status(400).json('This title already exists, try again with other title!');
+		} else {
+			response.status(500).json(error);
+		}
 	}
 });
 
