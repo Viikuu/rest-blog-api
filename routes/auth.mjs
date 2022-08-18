@@ -3,7 +3,7 @@ import express from 'express';
 import {compare, genSalt, hash} from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {User} from '../models/user.mjs';
-import {createAccessToken, createRefreshToken, sendAccessToken, sendRefreshToken} from '../utils/tokens.mjs';
+import {sendAccessToken, sendRefreshToken} from '../utils/tokens.mjs';
 import {Token} from '../models/tokenblacklist.mjs';
 
 const authRouter = express.Router();
@@ -47,8 +47,8 @@ authRouter.post('/login', async (request, response) => {
 				response.status(400).json('Wrong credentials!');
 			} else {
 				request.body._id = user._id;
-				sendRefreshToken(response, await createRefreshToken(user));
-				sendAccessToken(request, response, await createAccessToken(user));
+				sendRefreshToken(response, await user.generateRefreshToken());
+				sendAccessToken(request, response, await user.generateAuthToken());
 				await User.findByIdAndUpdate(user._id, {
 					$set: user,
 				}, {
