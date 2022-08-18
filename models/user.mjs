@@ -1,5 +1,4 @@
 import process from 'node:process';
-import crypto from 'node:crypto';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
@@ -36,8 +35,8 @@ UserSchema.methods.generateAuthToken = function () {
 	});
 };
 
-UserSchema.methods.generateRefreshToken = function () {
-	const code = crypto.randomBytes(48).toString('hex');
+UserSchema.methods.generateRefreshToken = function (request) {
+	const code = request.ip;
 	this.refreshToken = code;
 	return jwt.sign({code}, process.env.REFRESH_TOKEN_SECRET, {
 		expiresIn: '7d',

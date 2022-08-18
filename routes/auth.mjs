@@ -47,7 +47,7 @@ authRouter.post('/login', async (request, response) => {
 				response.status(400).json('Wrong credentials!');
 			} else {
 				request.body._id = user._id;
-				sendRefreshToken(response, await user.generateRefreshToken());
+				sendRefreshToken(response, await user.generateRefreshToken(request));
 				sendAccessToken(request, response, await user.generateAuthToken());
 				await User.findByIdAndUpdate(user._id, {
 					$set: user,
@@ -63,9 +63,9 @@ authRouter.post('/login', async (request, response) => {
 
 authRouter.post('/logout', async (request, response) => {
 	try {
-		const authHeader = request.headers['authorization'];
+		const authHeader = request.cookies.accessToken;
 		const token = authHeader && authHeader.split(' ')[1];
-		if (token !== null) {
+		if (token !== null && token !== undefined) {
 			const id = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
 			if (id) {
@@ -76,7 +76,7 @@ authRouter.post('/logout', async (request, response) => {
 			}
 		}
 
-		const code = jwt.verify(request.cookies.refreshToken, process.env.REFRESH_TOKEN_SECRET);
+		const code = jwt.verify(request.ip, process.env.REFRESH_TOKEN_SECRET);
 		const user = User.find({
 			code,
 		});
